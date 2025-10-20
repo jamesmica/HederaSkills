@@ -71,6 +71,21 @@ body{
   box-shadow:0 0 0 2px rgba(0,0,0,.3) inset;
 }
 
+/* Quand TOUTES les entités sont actives, elles doivent "paraître" inactives */
+#companies.all-active .chip.active{
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  outline:1px solid var(--border);
+}
+#companies.all-active .chip.active::after{ /* retire le voile actif */
+  background: transparent;
+}
+#companies.all-active .chip.active::before{ /* remet la pastille colorée */
+  background: var(--chip-color, var(--chip-active));
+  box-shadow:0 0 0 2px rgba(0,0,0,.3) inset;
+}
+
+
 #list{ overflow:auto; padding:6px 10px }
 #people{ list-style:none; margin:0; padding:0; display:grid; gap:8px }
 .person{
@@ -91,7 +106,7 @@ body{
 
 /* Toggle button */
 #panelToggle{
-  position:absolute; top:88px; right:4px; z-index:1001;
+  position:absolute; top:88px; right:384px; z-index:1001;
   width:36px; height:36px; border-radius:999px;
   border:1px solid var(--border);
   background:#00b65b; color:#fff; cursor:pointer;
@@ -151,4 +166,24 @@ body.panel-collapsed #panelToggle{ transform:none }
 }
 .marker-cluster {
   box-shadow: 0 0 0 3px rgba(17,17,17,.6);
+}
+
+/* Clusters très contrastés (jaune vif + bord noir épais) */
+.marker-cluster div{
+  background:#FFD400 !important;
+  color:#111 !important;
+  border:2px solid #111 !important;
+  width:42px; height:42px; line-height:42px;
+  font-weight:800; font-size:14px;
+  border-radius:50%;
+  box-shadow:0 0 0 3px rgba(0,0,0,.45);
+}
+.marker-cluster {
+  box-shadow:none; /* on laisse le halo au div interne */
+}
+
+/* (facultatif) Spider-legs un peu plus visibles sur fond clair */
+.leaflet-spider-leg {
+  stroke: rgba(0,0,0,.45);
+  stroke-width: 1.5;
 }

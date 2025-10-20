@@ -18,6 +18,7 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""
   ></script>
+ <script src="https://cdn.jsdelivr.net/npm/overlapping-marker-spiderfier-leaflet@0.2.7/dist/oms.min.js"></script>
 
   <!-- MarkerCluster -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
@@ -29,10 +30,11 @@
     <div id="map" aria-label="Carte des collaborateurs"></div>
 
     <aside id="panel" aria-label="Panneau latéral des filtres et résultats">
+          <button id="panelToggle" aria-expanded="true" aria-controls="panel" title="Afficher/Masquer le panneau">⟩</button>
+
       <header class="panel-header">
         <div class="brand">
-          <h1>Équipe & Compétences</h1>
-          <p class="muted">1 point = 1 personne • Couleur = Entité</p>
+          <h1>Carte des compétences</h1>
         </div>
       </header>
 
@@ -56,13 +58,11 @@
       </section>
     </aside>
 
-    <button id="panelToggle" aria-expanded="true" aria-controls="panel" title="Afficher/Masquer le panneau">⟩</button>
   </div>
 
   <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card">
       <button id="modalClose" class="soft icon-only" aria-label="Fermer">✕</button>
-      <h2 id="modalTitle">Compétences clés</h2>
       <div id="modalBody"></div>
     </div>
   </div>
