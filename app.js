@@ -1,5 +1,5 @@
 /* Config */
-const SHEET_URL = window.__GSHEET_URL__;
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRszYCdjHlFvMHkMvU9j8Mg8CHK6cou5R-PVJULGrNB9a9s3qrcvY2pSuPPwAjxOQ/pub?gid=1426119136&single=true&output=csv";
 
 /* Utils */
 const $ = (s)=>document.querySelector(s);
@@ -116,6 +116,22 @@ function normalizePeople(table){
 }
 
 /* Markers */
+function personCardHTML(p){
+  const mail = p.email ? `<a href="mailto:${p.email}">${p.email}</a>` : "—";
+  const tel  = p.tel || "—";
+  const photo = pravatar(`${p.prenom} ${p.nom} ${p.entite}`);
+  return `
+    <div class="popup-card">
+      <img alt="Photo de ${p.prenom} ${p.nom}" src="${photo}" />
+      <div>
+        <div class="name">${p.prenom} ${p.nom}</div>
+        <div class="meta">${p.entite || ""} ${p.poste ? "• " + p.poste : ""}</div>
+        <div class="meta">${tel} • ${mail}</div>
+        <button class="btn" data-action="skills">Compétences clés</button>
+      </div>
+    </div>`;
+}
+
 function addMarkers(){
   // Clear
   markers.forEach(m=> m.remove());

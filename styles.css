@@ -64,10 +64,10 @@ body{
   outline:2px solid rgba(255,255,255,.18);
   transition: all .15s ease;
 }
-.chip.active{ background: var(--chip-active); outline:2px solid #fff }
+.chip.active{ background: var(--chip-color, var(--chip-active)); outline:2px solid #fff }
 .chip::before{
   content:""; display:inline-block; width:.65em; height:.65em; border-radius:50%;
-  background: var(--chip-active); margin-right:.45em;
+  background: var(--chip-color, var(--chip-active)); margin-right:.45em;
   box-shadow:0 0 0 2px rgba(0,0,0,.3) inset;
 }
 
@@ -124,3 +124,31 @@ body.panel-collapsed #panelToggle{ transform:none }
 .popup-card .name{ font-weight:700 }
 .popup-card .meta{ font-size:12px; opacity:.9 }
 .popup-card .btn{ margin-top:6px; font-size:12px; padding:6px 8px; border-radius:8px; background:#000; color:#fff; border:none; cursor:pointer }
+
+
+/* Rich tooltip with full card content */
+.leaflet-tooltip.rich-tooltip {
+  background: rgba(0,0,0,.92);
+  color:#fff;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius:12px;
+  padding:10px;
+  box-shadow: var(--shadow);
+  pointer-events:auto; /* allow button click inside tooltip */
+}
+.leaflet-tooltip.rich-tooltip .popup-card { 
+  grid-template-columns:48px 1fr; 
+}
+.leaflet-tooltip.rich-tooltip img {
+  width:48px; height:48px; border-radius:50%; object-fit:cover;
+}
+
+/* Highly distinctive cluster colors */
+.marker-cluster div {
+  background: #FFD400 !important; /* vivid yellow */
+  color: #111 !important;
+  border-color:#111 !important;
+}
+.marker-cluster {
+  box-shadow: 0 0 0 3px rgba(17,17,17,.6);
+}

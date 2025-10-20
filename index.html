@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Cartographie du personnel</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.png">
   <link rel="stylesheet" href="styles.css" />
   <!-- Leaflet -->
   <link
@@ -17,6 +18,11 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""
   ></script>
+
+  <!-- MarkerCluster -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 </head>
 <body>
   <div id="app">
@@ -26,7 +32,7 @@
       <header class="panel-header">
         <div class="brand">
           <h1>Équipe & Compétences</h1>
-          <p class="muted">Connexion directe au Google Sheet (onglet “Personnel”)</p>
+          <p class="muted">1 point = 1 personne • Couleur = Entité</p>
         </div>
       </header>
 
@@ -61,15 +67,9 @@
     </div>
   </div>
 
-  <!-- RENSEIGNE L’URL DE PUBLICATION DU SHEET CI-DESSOUS
-       Option 1 (recommandée): CSV publié
-         https://docs.google.com/spreadsheets/d/SHEET_ID/gviz/tq?tqx=out:csv&sheet=Personnel
-         ou  https://docs.google.com/spreadsheets/d/SHEET_ID/export?format=csv&id=SHEET_ID&gid=GID
-       Option 2: GViz JSON
-         https://docs.google.com/spreadsheets/d/SHEET_ID/gviz/tq?sheet=Personnel&tqx=out:json
-  -->
+  <!-- URL publiée de l’onglet Personnel -->
   <script>
-    window.__GSHEET_URL__ = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:csv&sheet=Personnel";
+    window.__GSHEET_URL__ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRszYCdjHlFvMHkMvU9j8Mg8CHK6cou5R-PVJULGrNB9a9s3qrcvY2pSuPPwAjxOQ/pub?gid=1426119136&single=true&output=csv";
   </script>
   <script src="app.js"></script>
 </body>
