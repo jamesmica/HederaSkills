@@ -1,0 +1,126 @@
+:root{
+  --bg:#0c0f0e;
+  --panel:#0d3d25;
+  --panel-2:#125934;
+  --text:#ffffff;
+  --muted:#d3e6dc;
+  --border:rgba(255,255,255,.18);
+  --chip:#1b6a40;
+  --chip-active:#2ea76b;
+  --shadow:0 10px 30px rgba(0,0,0,.25);
+  --panel-width: 380px;
+}
+
+*{ box-sizing:border-box }
+html,body,#app{ height:100% }
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  overflow:hidden;
+}
+#app{ position:relative }
+
+/* Map */
+#map{
+  position:absolute; inset:0;
+}
+/* Fond de carte “refs ithea”: OSM France + désaturation douce via CSS */
+.leaflet-tile-pane { filter: opacity(40%) grayscale(100%); }
+
+/* Panel */
+#panel{
+  position:absolute; top:0; right:0; bottom:0; width:var(--panel-width);
+  background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+  border-left:3px solid #fff;
+  box-shadow:var(--shadow);
+  display:flex; flex-direction:column;
+  transform: translateX(0);
+  transition: transform .35s ease;
+  z-index:1000;
+}
+.panel-header{ padding:12px; border-bottom:1px solid var(--border) }
+.brand h1{ margin:0; font-size:20px }
+.brand .muted{ margin: 4px 0 0; color:var(--muted); font-size:12px }
+
+.controls{ padding:12px; border-bottom:1px solid var(--border) }
+.search-row{ display:flex; gap:8px; align-items:center }
+#search{
+  flex:1; padding:10px 12px; border-radius:8px;
+  border:1px solid var(--border); outline:none;
+  background: rgba(255,255,255,.08); color:#fff;
+}
+.soft{
+  border:1px solid var(--border); background:transparent; color:#fff;
+  border-radius:8px; padding:6px 10px; cursor:pointer;
+}
+.filters{ margin-top:10px }
+.filters-head{ display:flex; align-items:center; gap:8px; margin-bottom:8px }
+.filters-head strong{ font-size:14px }
+.chips{ display:flex; flex-wrap:wrap; gap:8px }
+.chip{
+  border:none; border-radius:999px; padding:6px 10px;
+  background: var(--chip);
+  color:#fff; cursor:pointer;
+  outline:2px solid rgba(255,255,255,.18);
+  transition: all .15s ease;
+}
+.chip.active{ background: var(--chip-active); outline:2px solid #fff }
+.chip::before{
+  content:""; display:inline-block; width:.65em; height:.65em; border-radius:50%;
+  background: var(--chip-active); margin-right:.45em;
+  box-shadow:0 0 0 2px rgba(0,0,0,.3) inset;
+}
+
+#list{ overflow:auto; padding:6px 10px }
+#people{ list-style:none; margin:0; padding:0; display:grid; gap:8px }
+.person{
+  display:grid; grid-template-columns:48px 1fr; gap:10px; align-items:center;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px; padding:8px;
+}
+.person img{
+  width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.35);
+}
+.person .name{ font-weight:700 }
+.person .meta{ font-size:12px; opacity:.9 }
+.person .actions{ margin-top:4px; display:flex; gap:8px; flex-wrap:wrap }
+.person .btn{ font-size:12px; padding:6px 8px; border-radius:8px; background:#fff; color:#000; border:none; cursor:pointer }
+
+.hidden{ display:none }
+
+/* Toggle button */
+#panelToggle{
+  position:absolute; top:88px; right:4px; z-index:1001;
+  width:36px; height:36px; border-radius:999px;
+  border:1px solid var(--border);
+  background:#00b65b; color:#fff; cursor:pointer;
+  transition: transform .35s ease;
+}
+body.panel-collapsed #panel{ transform: translateX(100%) }
+body.panel-collapsed #panelToggle{ transform:none }
+
+/* Modal */
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,.5); display:grid; place-items:center; z-index:2000 }
+.modal.hidden{ display:none }
+.modal-card{
+  width:min(720px, 92vw); max-height:80vh; overflow:auto;
+  background:#fff; color:#000; border-radius:16px; padding:18px;
+  box-shadow: var(--shadow);
+}
+.modal-card .icon-only{
+  float:right; background:transparent; border:none; color:#000; font-size:18px; cursor:pointer;
+}
+
+/* Popup styling tweaks */
+.leaflet-popup-content-wrapper{ border-radius:12px }
+.leaflet-popup-content{
+  margin:10px 12px; min-width:240px;
+}
+.popup-card{
+  display:grid; grid-template-columns:56px 1fr; gap:10px; align-items:center;
+}
+.popup-card img{ width:56px; height:56px; border-radius:50%; object-fit:cover }
+.popup-card .name{ font-weight:700 }
+.popup-card .meta{ font-size:12px; opacity:.9 }
+.popup-card .btn{ margin-top:6px; font-size:12px; padding:6px 8px; border-radius:8px; background:#000; color:#fff; border:none; cursor:pointer }

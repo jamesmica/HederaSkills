@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Cartographie du personnel</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+</head>
+<body>
+  <div id="app">
+    <div id="map" aria-label="Carte des collaborateurs"></div>
+
+    <aside id="panel" aria-label="Panneau latéral des filtres et résultats">
+      <header class="panel-header">
+        <div class="brand">
+          <h1>Équipe & Compétences</h1>
+          <p class="muted">Connexion directe au Google Sheet (onglet “Personnel”)</p>
+        </div>
+      </header>
+
+      <section class="controls">
+        <div class="search-row">
+          <input id="search" type="search" placeholder="Rechercher (nom, poste, entité, compétence…)" autocomplete="off" />
+          <button id="clear" class="soft" title="Effacer la recherche" aria-label="Effacer">Effacer</button>
+        </div>
+        <div class="filters">
+          <div class="filters-head">
+            <strong>Entités</strong>
+            <button id="filtersReset" class="soft" title="Réinitialiser">Réinitialiser</button>
+          </div>
+          <div id="companies" class="chips" role="group" aria-label="Filtrer par entité"></div>
+        </div>
+      </section>
+
+      <section id="list">
+        <ul id="people"></ul>
+        <div id="empty" class="hidden">Aucun résultat.</div>
+      </section>
+    </aside>
+
+    <button id="panelToggle" aria-expanded="true" aria-controls="panel" title="Afficher/Masquer le panneau">⟩</button>
+  </div>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <button id="modalClose" class="soft icon-only" aria-label="Fermer">✕</button>
+      <h2 id="modalTitle">Compétences clés</h2>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- RENSEIGNE L’URL DE PUBLICATION DU SHEET CI-DESSOUS
+       Option 1 (recommandée): CSV publié
+         https://docs.google.com/spreadsheets/d/SHEET_ID/gviz/tq?tqx=out:csv&sheet=Personnel
+         ou  https://docs.google.com/spreadsheets/d/SHEET_ID/export?format=csv&id=SHEET_ID&gid=GID
+       Option 2: GViz JSON
+         https://docs.google.com/spreadsheets/d/SHEET_ID/gviz/tq?sheet=Personnel&tqx=out:json
+  -->
+  <script>
+    window.__GSHEET_URL__ = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:csv&sheet=Personnel";
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
