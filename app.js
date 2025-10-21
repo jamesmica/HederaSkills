@@ -54,8 +54,7 @@ function computePalette(items){
 }
 function simpleTipText(p){
   const nom = [p.prenom, p.nom].filter(Boolean).join(" ");
-  const right = [p.entite, p.poste].filter(Boolean).join(" • ");
-  return right ? `${nom} — ${right}` : nom || "Profil";
+  return nom;
 }
 
 
@@ -191,24 +190,9 @@ function normalizePeople(table){
     email: pick(row, ["Adresse mail","Email","Mail","Courriel"]),
     tel: pick(row, ["Numéro de téléphone","Téléphone","Tel","Tél."]),
     poste: pick(row, ["Poste occupé","Poste","Fonction"]),
+    ville : pick(row, ["Zone géographique","Localité","Localite"]),
     competences: pick(row, ["Compétences clés","Compétences","Competences"]),
 
-    // infos enrichies facultatives (si colonnes existantes)
-    ville: pick(row, ["Ville","Localisation","City"]),
-    region: pick(row, ["Région","Region"]),
-    pays: pick(row, ["Pays","Country"]),
-    adresse: pick(row, ["Adresse","Address"]),
-    cp: pick(row, ["Code Postal","CP","ZIP"]),
-    site: pick(row, ["Site","Bureau","Office","Agence"]),
-    manager: pick(row, ["Manager","Responsable"]),
-    seniorite: pick(row, ["Ancienneté","Seniority"]),
-    experience: pick(row, ["Années d'expérience","Experience","XP"]),
-    disponibilite: pick(row, ["Disponibilité","Disponibilite","Availability"]),
-    linkedin: pick(row, ["LinkedIn","Linkedin","Profil LinkedIn"]),
-    langues: pick(row, ["Langues","Languages"]),
-    certifications: pick(row, ["Certifications","Certifs"]),
-    references: pick(row, ["Références","References","Projets","Projects"]),
-    notes: pick(row, ["Notes","Commentaires","Remarques"]),
 
     lat: parseNumber(pick(row, ["latitude","Lat","lat"])),
     lon: parseNumber(pick(row, ["longitude","Lon","lon","lng"]))
@@ -248,8 +232,8 @@ function parseCompetencesAndThematics(str){
 
 /* Markers */
 function personCardHTML(p){
-  const mail = p.email ? `<a href="mailto:${p.email}">${p.email}</a>` : "—";
-  const tel  = p.tel || "—";
+  const mail = p.email ? `<a href="mailto:${p.email}" style="color:#334155; text-decoration:none;">${p.email}</a>` : "-";
+  const tel  = p.tel ? `<a href="tel:${p.tel}" style="color:#334155; text-decoration:none;">${p.tel}</a>` : "-";
   const photo = pravatar(`${p.prenom} ${p.nom} ${p.entite}`);
   return `
     <div class="popup-card">
@@ -257,6 +241,7 @@ function personCardHTML(p){
       <div>
         <div class="name">${p.prenom} ${p.nom}</div>
         <div class="meta">${p.entite || ""} ${p.poste ? "• " + p.poste : ""}</div>
+        <div class="meta">${p.ville|| " "}</div>
         <div class="meta">${tel} • ${mail}</div>
         <button class="btn" data-action="skills">Compétences clés</button>
       </div>
@@ -339,7 +324,7 @@ function openPopup(p, marker){
     if (currentPopupMarker === marker) currentPopupMarker = null;
   });
 
-  // Bouton "Compétences clés" — attache robuste, sans propagation sur la carte
+  // Bouton "Compétences clés" - attache robuste, sans propagation sur la carte
   requestAnimationFrame(() => {
     const pop = marker.getPopup && marker.getPopup();
     const root = pop && pop.getElement && pop.getElement();
@@ -386,7 +371,7 @@ function ensureModal(){
   }
   return modal;
 }
-// NEW — garantit que #modal, #modalTitle et #modalBody existent et renvoie leurs refs
+// NEW - garantit que #modal, #modalTitle et #modalBody existent et renvoie leurs refs
 function getModalEls(){
   let modal = document.getElementById("modal");
   let body  = document.getElementById("modalBody");
@@ -423,15 +408,13 @@ function getModalEls(){
 
 
 
-// REPLACE — version robuste de showSkills(p) qui utilise getModalEls()
+// REPLACE - version robuste de showSkills(p) qui utilise getModalEls()
 function showSkills(p){
   const { modal, body } = getModalEls();
   const photo = pravatar(`${p.prenom} ${p.nom} ${p.entite}`);
 
   // Helpers UI (palette neutre)
   const chip = (t)=> `<span style="display:inline-block;margin:.125rem .25rem;padding:.32rem .7rem;border-radius:999px;background:#f2f4f7;color:#0f172a;font-size:.9rem;font-weight:600;border:1px solid #e5e7eb;">${ucFirstWord(t)}</span>`;
-  const line = (label, val)=> val ? `<div style="display:flex;gap:.5rem;align-items:baseline;"><strong style="min-width:10rem;color:#334155;">${label}</strong><span>${val}</span></div>` : "";
-  const list = (arr)=> arr && arr.length ? `<ul style="margin:.25rem 0 .5rem;padding-left:1.1rem;">${arr.map(x=>`<li>${x}</li>`).join("")}</ul>` : "";
   const esc  = (s)=> String(s||"").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   const split = (s)=> String(s||"").split(/[:;,\u2022|]+/).map(t=>t.trim()).filter(Boolean);
 
@@ -459,35 +442,25 @@ function showSkills(p){
 
   // Autres infos (si colonnes présentes dans le Sheet)
   const identite = [p.entite, p.poste].filter(Boolean).join(" • ");
-  const local    = [p.site, p.ville, p.region, p.pays].filter(Boolean).join(" • ");
+  const ville = p.ville ? esc(p.ville) : "";
   const coord    = [
-    p.tel ? `<a href="tel:${p.tel}">${p.tel}</a>` : "",
-    p.email ? `<a href="mailto:${p.email}">${p.email}</a>` : "",
-    p.linkedin ? `<a href="${p.linkedin}" target="_blank" rel="noopener">LinkedIn</a>` : ""
+    p.tel ? `<a href="tel:${p.tel}" style="color:#334155; text-decoration:none;">${p.tel}</a>` : "",
+    p.email ? `<a href="mailto:${p.email}" style="color:#334155; text-decoration:none;">${p.email}</a>` : ""
   ].filter(Boolean).join(" • ");
 
   body.innerHTML = `
     <!-- En-tête sans titre général : photo + Nom Prénom -->
-    <div style="display:grid;grid-template-columns:96px 1fr;gap:1rem;align-items:center;margin-bottom:.5rem;">
+    <div style="display:grid;grid-template-columns:96px 1fr;gap:1rem;align-items:center;margin-bottom:.5rem;line-height:1.4;">
       <img src="${photo}" alt="Photo de ${p.prenom} ${p.nom}" style="width:96px;height:96px;border-radius:12px;object-fit:cover;box-shadow:0 2px 10px rgba(0,0,0,.08);" />
       <div>
         <div style="font-size:1.25rem;font-weight:800;color:#0f172a">${[p.prenom, p.nom].filter(Boolean).join(" ")}</div>
-        <div style="color:#475569;margin:.125rem 0 .25rem;">${identite || "—"}</div>
-        ${coord ? `<div style="color:#334155">${coord}</div>` : ""}
+        <div style="color:#334155;">${identite || "-"}</div>
+        <div style="color:#334155;">${ville}</div>
+        ${coord ? `<div style="color:#334155;">${coord}</div>` : ""}
       </div>
     </div>
 
     <hr style="border:none;border-top:1px solid #e5e7eb;margin:.5rem 0 1rem;" />
-
-    <div style="display:grid;grid-template-columns:1fr;gap:.75rem;">
-      ${local ? line("Localisation", local) : ""}
-      ${line("Manager", p.manager || "")}
-      ${line("Ancienneté", p.seniorite || "")}
-      ${line("Expérience", p.experience || "")}
-      ${line("Disponibilité", p.disponibilite || "")}
-      ${p.adresse || p.cp ? line("Adresse", [p.adresse, p.cp].filter(Boolean).join(", ")) : ""}
-      ${p.notes ? line("Notes", esc(p.notes)) : ""}
-    </div>
 
     ${sections.length ? `
       <div style="margin-top:1rem;">
@@ -536,7 +509,8 @@ function renderList(items){
       <div>
         <div class="name">${p.prenom} ${p.nom}</div>
         <div class="meta">${p.entite || ""} ${p.poste ? "• " + p.poste : ""}</div>
-        <div class="meta">${p.tel || "—"} • ${p.email ? `<a href="mailto:${p.email}">${p.email}</a>` : "—"}</div>
+        <div class="meta">${p.ville || " "}</div>
+        <div class="meta">${p.tel || "-"} • ${p.email ? `<a href="mailto:${p.email}">${p.email}</a>` : "-"}</div>
         <div class="actions">
           <button class="btn" data-action="focus">Voir sur la carte</button>
           <button class="btn" data-action="skills">Compétences clés</button>

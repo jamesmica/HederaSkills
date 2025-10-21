@@ -88,6 +88,10 @@ body{
 
 #list{ overflow:auto; padding:6px 10px }
 #people{ list-style:none; margin:0; padding:0; display:grid; gap:8px }
+#people a {
+    color: white;
+    text-decoration: none;
+}
 .person{
   display:grid; grid-template-columns:48px 1fr; gap:10px; align-items:center;
   background: rgba(255,255,255,.06);
@@ -131,6 +135,10 @@ body.panel-collapsed #panelToggle{ transform:none }
 .leaflet-popup-content-wrapper{ border-radius:12px }
 .leaflet-popup-content{
   margin:10px 12px; min-width:240px;
+}
+.leaflet-popup-content{
+  width: max-content !important;                    /* s’adapte au contenu */
+  max-width: min(calc(100vw - 40px), calc(100% - 40px));     /* garde-fou conteneur carte */
 }
 .popup-card{
   display:grid; grid-template-columns:56px 1fr; gap:10px; align-items:center;
