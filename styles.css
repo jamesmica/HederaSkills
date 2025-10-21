@@ -195,3 +195,7 @@ body.panel-collapsed #panelToggle{ transform:none }
   stroke: rgba(0,0,0,.45);
   stroke-width: 1.5;
 }
+
+/* aide le GPU pendant les zooms */
+.leaflet-marker-pane, .leaflet-tile-pane, .leaflet-map-pane { will-change: transform; }
+

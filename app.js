@@ -87,7 +87,7 @@ function simpleTipText(p){
 function jitterLatLng(baseLatLng, indexInGroup, groupSize){
   const zoom = map.getZoom();
   // Amplitude du jitter en px (diminue quand on zoome)
-  const basePx = Math.max(0, Math.min(20, (14 + zoom) * 2 + 4));
+  const basePx = Math.max(0, Math.min(18, (14 + zoom) * 2 + 4));
   if (groupSize <= 1 || basePx === 0) return baseLatLng;
 
   // Trouver l’anneau et la position dans l’anneau (6, 12, 18, ...)
@@ -289,8 +289,8 @@ function addMarkers(){
           display:block; width:22px; height:22px; border-radius:50%;
           background:${color};
           box-shadow:
-            0 0 0 3px rgba(255,255,255,.95) inset,
-            0 0 0 2px rgba(0,0,0,.45);
+            0 0 0 2px rgba(255,255,255,.95) inset,
+            0 0 0 1px rgba(0,0,0,.45);
         "></span>`,
       iconSize: [22,22]
     });
