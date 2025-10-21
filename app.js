@@ -1,5 +1,19 @@
 /* Config */
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRszYCdjHlFvMHkMvU9j8Mg8CHK6cou5R-PVJULGrNB9a9s3qrcvY2pSuPPwAjxOQ/pub?gid=1426119136&single=true&output=csv";
+/* Couleurs par entité (modifiable à volonté) */
+const COMPANY_COLORS = {
+  "ASSIST Conseils":           "#cd7228",
+  "Epicure ing":               "#427e7f",
+  "Collectivités Conseils":    "#7ba34d",
+  "Hedera Services Group":     "#35578D",
+  "Majalis":                   "#427e7f",
+  "Nuage Café":                "#e8bdb6",
+  "OCADIA":                    "#f2d5b7",
+  "SG Conseils":               "#70ced0",
+  "Wheels and Ways":           "#db863C",
+  "ASSIST Conseils Sud-Ouest": "#cd7228",
+  "Ithéa Conseil":             "#d13c33"
+};
 
 /* Utils */
 const $ = (s)=>document.querySelector(s);
@@ -43,15 +57,25 @@ function syncChipsAllState(){
 
 
 /* Color per company */
+/* Color per company */
 function computePalette(items){
-  const uniq = [...new Set(items.map(p=>p.entite).filter(Boolean))];
-  const base = [
-    "#1DB5C5","#70BA7A","#EE2528","#F38331","#5C368D","#F9B832","#2ea76b","#00753B",
-    "#1f8a70","#6078ea","#ffba49","#ef476f","#073b4c","#ffd166","#06d6a0"
+  const uniq = [...new Set(items.map(p => p.entite).filter(Boolean))];
+
+  // Palette de secours si une entité n’est pas définie dans COMPANY_COLORS
+  const fallback = [
+    "#1DB5C5","#70BA7A","#EE2528","#F38331","#5C368D","#F9B832","#2ea76b",
+    "#00753B","#1f8a70","#6078ea","#ffba49","#ef476f","#073b4c","#ffd166","#06d6a0"
   ];
-  uniq.forEach((name,i)=> companyColors.set(name, base[i % base.length]));
+
+  uniq.forEach((name, i) => {
+    const override = COMPANY_COLORS[name];           // couleur imposée si dispo
+    const color = override || fallback[i % fallback.length]; // sinon fallback
+    companyColors.set(name, color);
+  });
+
   return uniq;
 }
+// Texte simple pour l’étiquette hover
 function simpleTipText(p){
   const nom = [p.prenom, p.nom].filter(Boolean).join(" ");
   return nom;
