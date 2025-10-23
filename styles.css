@@ -93,13 +93,17 @@ body{
     text-decoration: none;
 }
 .person{
-  display:grid; grid-template-columns:48px 1fr; gap:10px; align-items:center;
+  display:grid; grid-template-columns:80px 1fr; gap:10px; align-items:center;
   background: rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.1);
   border-radius:12px; padding:8px;
 }
-.person img{
-  width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.35);
+.person img {
+    width: 80px;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,.35);
 }
 .person .name{ font-weight:700 }
 .person .meta{ font-size:12px; opacity:.9 }
@@ -140,10 +144,13 @@ body.panel-collapsed #panelToggle{ transform:none }
   width: max-content !important;                    /* s’adapte au contenu */
   max-width: min(calc(100vw - 40px), calc(100% - 40px));     /* garde-fou conteneur carte */
 }
-.popup-card{
-  display:grid; grid-template-columns:56px 1fr; gap:10px; align-items:center;
+.popup-card {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 10px;
+    align-items: center;
 }
-.popup-card img{ width:56px; height:56px; border-radius:50%; object-fit:cover }
+.popup-card img{ width:80px; height:80px; border-radius:50%; object-fit:cover }
 .popup-card .name{ font-weight:700 }
 .popup-card .meta{ font-size:12px; opacity:.9 }
 .popup-card .btn{ margin-top:6px; font-size:12px; padding:6px 8px; border-radius:8px; background:#000; color:#fff; border:none; cursor:pointer }
@@ -195,7 +202,3 @@ body.panel-collapsed #panelToggle{ transform:none }
   stroke: rgba(0,0,0,.45);
   stroke-width: 1.5;
 }
-
-/* aide le GPU pendant les zooms */
-.leaflet-marker-pane, .leaflet-tile-pane, .leaflet-map-pane { will-change: transform; }
-

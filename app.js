@@ -1,17 +1,30 @@
 /* Config */
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRszYCdjHlFvMHkMvU9j8Mg8CHK6cou5R-PVJULGrNB9a9s3qrcvY2pSuPPwAjxOQ/pub?gid=1426119136&single=true&output=csv";
+
+/* === Photos locales (remplace les placeholders) === */
+const PHOTO_BASE = "./photosMinSquare"; // chemin vers ton dossier (relatif à index.html)
+
+function photoURL(p){
+  const prenom = String(p.prenom||"").trim();
+  const nom    = String(p.nom||"").trim().toLocaleUpperCase('fr-FR');
+  const base   = `${prenom} ${nom}`.replace(/\s+/g," ").trim(); // « Prénom NOM »
+  return `${PHOTO_BASE}/${base}.jpg`;
+}
+
+
 /* Couleurs par entité (modifiable à volonté) */
 const COMPANY_COLORS = {
+  "Arwytec":                   "#567e66",
   "ASSIST Conseils":           "#cd7228",
+  "ASSIST Conseils Sud-Ouest": "#cd7228",
   "Epicure ing":               "#427e7f",
   "Collectivités Conseils":    "#7ba34d",
   "Hedera Services Group":     "#35578D",
-  "Majalis":                   "#427e7f",
+  "Majalis":                   "#d8dce4",
   "Nuage Café":                "#e8bdb6",
-  "OCADIA":                    "#f2d5b7",
+  "OCADIA":                    "#555334",
   "SG Conseils":               "#70ced0",
-  "Wheels and Ways":           "#db863C",
-  "ASSIST Conseils Sud-Ouest": "#cd7228",
+  "Wheels and Ways":           "#9267c1",
   "Ithéa Conseil":             "#d13c33"
 };
 
@@ -20,7 +33,6 @@ const $ = (s)=>document.querySelector(s);
 const $$ = (s)=>Array.from(document.querySelectorAll(s));
 const norm = (s)=> (s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const tokens = (q)=> norm(q).split(/\s+/).filter(Boolean);
-const pravatar = (seed)=> `https://i.pravatar.cc/150?u=${encodeURIComponent(seed)}`; // placeholder libre
 const parseNumber = (v)=>{
   if (v === null || v === undefined) return NaN;
   if (typeof v === "number") return v;
@@ -258,10 +270,14 @@ function parseCompetencesAndThematics(str){
 function personCardHTML(p){
   const mail = p.email ? `<a href="mailto:${p.email}" style="color:#334155; text-decoration:none;">${p.email}</a>` : "-";
   const tel  = p.tel ? `<a href="tel:${p.tel}" style="color:#334155; text-decoration:none;">${p.tel}</a>` : "-";
-  const photo = pravatar(`${p.prenom} ${p.nom} ${p.entite}`);
+  const photo = photoURL(p);
+  const altJpeg = photo.replace(/\.jpg$/i, '.jpeg'); // fallback si certaines photos sont en .jpeg
   return `
     <div class="popup-card">
-      <img alt="Photo de ${p.prenom} ${p.nom}" src="${photo}" />
+        <img alt="Photo de ${p.prenom} ${p.nom}"
+      src="${photo}"
+      data-alt="${altJpeg}"
+     />
       <div>
         <div class="name">${p.prenom} ${p.nom}</div>
         <div class="meta">${p.entite || ""} ${p.poste ? "• " + p.poste : ""}</div>
@@ -435,8 +451,8 @@ function getModalEls(){
 // REPLACE - version robuste de showSkills(p) qui utilise getModalEls()
 function showSkills(p){
   const { modal, body } = getModalEls();
-  const photo = pravatar(`${p.prenom} ${p.nom} ${p.entite}`);
-
+  const photo = photoURL(p);
+  const altJpeg = photo.replace(/\.jpg$/i, '.jpeg');
   // Helpers UI (palette neutre)
   const chip = (t)=> `<span style="display:inline-block;margin:.125rem .25rem;padding:.32rem .7rem;border-radius:999px;background:#f2f4f7;color:#0f172a;font-size:.9rem;font-weight:600;border:1px solid #e5e7eb;">${ucFirstWord(t)}</span>`;
   const esc  = (s)=> String(s||"").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
@@ -475,8 +491,7 @@ function showSkills(p){
   body.innerHTML = `
     <!-- En-tête sans titre général : photo + Nom Prénom -->
     <div style="display:grid;grid-template-columns:96px 1fr;gap:1rem;align-items:center;margin-bottom:.5rem;line-height:1.4;">
-      <img src="${photo}" alt="Photo de ${p.prenom} ${p.nom}" style="width:96px;height:96px;border-radius:12px;object-fit:cover;box-shadow:0 2px 10px rgba(0,0,0,.08);" />
-      <div>
+    <img src="${photo}" alt="Photo de ${p.prenom} ${p.nom}" style="width:96px;height:96px;border-radius:12px;object-fit:cover;box-shadow:0 2px 10px rgba(0,0,0,.08);" />      <div>
         <div style="font-size:1.25rem;font-weight:800;color:#0f172a">${[p.prenom, p.nom].filter(Boolean).join(" ")}</div>
         <div style="color:#334155;">${identite || "-"}</div>
         <div style="color:#334155;">${ville}</div>
@@ -529,7 +544,10 @@ function renderList(items){
     const li = document.createElement("li");
     li.className = "person";
     li.innerHTML = `
-      <img alt="" src="${pravatar(`${p.prenom} ${p.nom} ${p.entite}`)}" />
+      <img alt="Photo de ${p.prenom} ${p.nom}"
+        src="${photoURL(p)}"
+        data-alt="${photoURL(p).replace(/\.jpg$/i, '.jpeg')}" />
+
       <div>
         <div class="name">${p.prenom} ${p.nom}</div>
         <div class="meta">${p.entite || ""} ${p.poste ? "• " + p.poste : ""}</div>
