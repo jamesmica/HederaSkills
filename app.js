@@ -243,7 +243,12 @@ function parseCompetencesAndThematics(str){
   if (!str) return out;
 
   // On sépare sur :, ;, , , |, puce • ou retour à la ligne
-  const raw = String(str).split(/[:;,\n|\u2022]+/).map(s=>s.trim()).filter(Boolean);
+  const raw = String(str)
+    .split(/(?:\s+[-–—\/]\s+)|[:;,\n|\u2022]+/)
+    .map(s=>s.trim())
+    .filter(Boolean);
+
+
 
   // Détection “mode thématique” : tout ce qui suit “Thématique(s)” jusqu'à un autre label
   let inThema = false;
@@ -456,7 +461,13 @@ function showSkills(p){
   // Helpers UI (palette neutre)
   const chip = (t)=> `<span style="display:inline-block;margin:.125rem .25rem;padding:.32rem .7rem;border-radius:999px;background:#f2f4f7;color:#0f172a;font-size:.9rem;font-weight:600;border:1px solid #e5e7eb;">${ucFirstWord(t)}</span>`;
   const esc  = (s)=> String(s||"").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-  const split = (s)=> String(s||"").split(/[:;,\u2022|]+/).map(t=>t.trim()).filter(Boolean);
+  // Sépare sur " - ", " – ", " — " ou " / " (avec espaces autour), et sur : ; , • |
+  const split = (s)=> String(s||"")
+    .split(/(?:\s+[-–—\/]\s+)|[:;,\u2022|]+/)
+    .map(t=>t.trim())
+    .filter(Boolean);
+
+
 
   // Sections génériques depuis "Compétences clés" :
   // chaque ligne => "Titre: éléments ; séparés , | • ..."
@@ -509,14 +520,6 @@ function showSkills(p){
             ${sec.chips.length ? `<div>${sec.chips.map(chip).join(" ")}</div>` : `<div style="color:#6b7280;font-style:italic;">Aucun élément</div>`}
           </div>
         `).join("")}
-      </div>` : ""}
-
-    ${p.competences ? `
-      <div style="margin-top:1rem;">
-        <details style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:.5rem .75rem;">
-          <summary style="cursor:pointer;font-weight:600;color:#0f172a;outline:none;">Texte complet des compétences</summary>
-          <div style="white-space:pre-wrap;color:#374151;margin-top:.5rem;">${esc(p.competences)}</div>
-        </details>
       </div>` : ""}
   `;
 
