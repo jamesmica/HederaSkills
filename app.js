@@ -471,23 +471,39 @@ function showSkills(p){
 
   // Sections génériques depuis "Compétences clés" :
   // chaque ligne => "Titre: éléments ; séparés , | • ..."
-  function parseCompetencesSections(str){
-    const sections = [];
-    if (!str) return sections;
-    const lines = String(str).split(/\r?\n+/).map(l=>l.trim()).filter(Boolean);
-    for (const line of lines){
-      let title = "Compétences";
-      let content = line;
-      const idx = line.indexOf(":");
-      if (idx > -1){
-        title   = line.slice(0, idx).trim() || "Compétences";
-        content = line.slice(idx+1).trim();
-      }
-      const chips = split(content).map(esc);
-      sections.push({ title: esc(title), chips });
-    }
-    return sections;
+function parseCompetencesSections(str){
+  if (!str) return [];
+
+  const lines = String(str).split(/\r?\n+/).map(l=>l.trim()).filter(Boolean);
+
+  // Regroupe par titre logique
+  const buckets = new Map(); // key -> Set(chips)
+
+  const normTitleKey = (t) => {
+    const n = norm(t);
+    // Tout ce qui ressemble à "compétences", "compétences clés", ou vide → même seau
+    return (!n || /^competences?(?:\s+cles?)?$/.test(n)) ? 'competences' : n;
+  };
+
+  for (const line of lines){
+    const idx = line.indexOf(':');
+    const rawTitle = idx > -1 ? line.slice(0, idx).trim() : '';
+    const content  = idx > -1 ? line.slice(idx+1).trim() : line;
+
+    const key = normTitleKey(rawTitle);
+    if (!buckets.has(key)) buckets.set(key, new Set());
+
+    // `split` existe déjà dans ton code (sépare ; , • | etc.)
+    split(content).forEach(item => buckets.get(key).add(item.trim()));
   }
+
+  // Fabrique les sections finales
+  return [...buckets.entries()].map(([key, set]) => ({
+    title: key === 'competences' ? 'Compétences' : ucFirstWord(key),
+    chips: [...set].map(esc)
+  }));
+}
+
 
   const sections = parseCompetencesSections(p.competences);
 
