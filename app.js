@@ -14,7 +14,7 @@ function photoURL(p){
 
 /* Couleurs par entité (modifiable à volonté) */
 const COMPANY_COLORS = {
-  "Arwytec":                   "#567e66",
+  "Arwytec":                   "#a1cbb2ff",
   "ASSIST Conseils":           "#cd7228",
   "ASSIST Conseils Sud-Ouest": "#cd7228",
   "Epicure ing":               "#427e7f",
