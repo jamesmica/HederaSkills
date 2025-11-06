@@ -3,63 +3,170 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Cartographie du personnel</title>
+  <title>Cartographie & Veille</title>
+
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="stylesheet" href="styles.css" />
-  <!-- Leaflet -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
- <script src="https://cdn.jsdelivr.net/npm/overlapping-marker-spiderfier-leaflet@0.2.7/dist/oms.min.js"></script>
 
-  <!-- MarkerCluster -->
+  <!-- Leaflet core + clusters + spiderfier -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/overlapping-marker-spiderfier-leaflet@0.2.7/dist/oms.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <!-- Export Excel (utilisé par veille.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-  <div id="app">
-    <div id="map" aria-label="Carte des collaborateurs"></div>
+  <!-- Barre d’onglets -->
+  <nav class="tabs" aria-label="Navigation des sections">
+    <button class="tab-chip active" data-tab="annuaire" aria-controls="view-annuaire">Annuaire</button>
+    <button class="tab-chip" data-tab="references" aria-controls="view-references">Références</button>
+    <button class="tab-chip" data-tab="veille" aria-controls="view-veille">Veille concurrentielle</button>
+  </nav>
 
-    <aside id="panel" aria-label="Panneau latéral des filtres et résultats">
-          <button id="panelToggle" aria-expanded="true" aria-controls="panel" title="Afficher/Masquer le panneau">⟩</button>
+  <!-- === VUE : ANNUAIRE (existant) === -->
+  <section id="view-annuaire" class="view active" aria-label="Section Annuaire">
+    <div id="app">
+      <div id="map" aria-label="Carte des collaborateurs"></div>
+
+      <aside id="panel" aria-label="Panneau latéral des filtres et résultats">
+        <button id="panelToggle" aria-expanded="true" aria-controls="panel" title="Afficher/Masquer le panneau">⟩</button>
+
+        <header class="panel-header">
+          <div class="brand">
+            <h1>Carte des compétences</h1>
+          </div>
+        </header>
+
+        <section class="controls">
+          <div class="search-row">
+            <input id="search" type="search" placeholder="Rechercher (nom, poste, entité, compétence…)" autocomplete="off" />
+            <button id="clear" class="soft" title="Effacer la recherche" aria-label="Effacer">Effacer</button>
+          </div>
+          <div class="filters">
+            <div class="filters-head">
+              <strong>Entités</strong>
+              <button id="filtersReset" class="soft" title="Réinitialiser">Réinitialiser</button>
+            </div>
+            <div id="companies" class="chips" role="group" aria-label="Filtrer par entité"></div>
+          </div>
+        </section>
+
+        <section id="list">
+          <ul id="people"></ul>
+          <div id="empty" class="hidden">Aucun résultat.</div>
+        </section>
+      </aside>
+    </div>
+  </section>
+
+  <!-- === VUE : RÉFÉRENCES (nouvelle carte + panneau dédié) === -->
+  <section id="view-references" class="view" aria-label="Section Références">
+    <div id="refApp">
+      <div id="refMap" aria-label="Carte des références"></div>
+
+      <aside id="refPanel" aria-label="Panneau des références">
+        <header class="panel-header">
+          <div class="brand">
+            <h1>Références</h1>
+            <p class="muted">Carte dédiée pour les références (indépendante)</p>
+          </div>
+        </header>
+
+        <section class="controls">
+          <div class="search-row">
+            <input id="refSearch" type="search" placeholder="Rechercher une référence…" autocomplete="off" />
+            <button id="refClear" class="soft" title="Effacer">Effacer</button>
+          </div>
+          <!-- Placeholders pour futurs filtres -->
+          <div class="filters">
+            <div class="filters-head">
+              <strong>Filtres</strong>
+            </div>
+            <div class="chips" id="refFilters"></div>
+          </div>
+        </section>
+
+        <section id="refList">
+          <ul id="refItems"></ul>
+          <div id="refEmpty" class="hidden">Aucun élément.</div>
+        </section>
+      </aside>
+    </div>
+  </section>
+
+  <!-- === VUE : VEILLE CONCURRENTIELLE (UI basée sur veille.js) === -->
+   <!-- === VUE : VEILLE CONCURRENTIELLE (UI basée sur veille.js) === -->
+  <section id="view-veille" class="view" aria-label="Section Veille concurrentielle">
+    <!-- Carte indépendante -->
+    <div id="veilleMap" class="hidden" aria-label="Carte des marchés"></div>
+
+    <!-- Overlay/chips (compteurs & feedbacks) -->
+    <div id="veilleOverlay" class="hidden">
+      <span id="veilleCount" class="pill muted">Saisissez vos critères puis lancez la recherche.</span>
+    </div>
+
+    <!-- Panneau latéral dédié Veille -->
+    <aside id="veillePanel" class="hidden" aria-label="Panneau de recherche Veille">
+      <!-- ⬅️ flèche repli identique à Annuaire -->
+      <button id="veillePanelToggle" aria-expanded="true" aria-controls="veillePanel" title="Afficher/Masquer le panneau">⟩</button>
 
       <header class="panel-header">
         <div class="brand">
-          <h1>Carte des compétences</h1>
+          <h1>Veille concurrentielle</h1>
+          <p class="muted">Recherchez, affichez sur la carte, exportez en Excel.</p>
         </div>
       </header>
 
+      <!-- Contrôles de recherche -->
+      <!-- Contrôles de recherche -->
       <section class="controls">
-        <div class="search-row">
-          <input id="search" type="search" placeholder="Rechercher (nom, poste, entité, compétence…)" autocomplete="off" />
-          <button id="clear" class="soft" title="Effacer la recherche" aria-label="Effacer">Effacer</button>
+        <div class="stack">
+          <label class="lbl">Recherche plein texte</label>
+          <input id="veilleSearch" type="search" placeholder="Objet, acheteur, titulaire, procédure…" autocomplete="off" />
         </div>
-        <div class="filters">
-          <div class="filters-head">
-            <strong>Entités</strong>
-            <button id="filtersReset" class="soft" title="Réinitialiser">Réinitialiser</button>
+
+        <div class="stack">
+          <label class="lbl">Titulaire(s) (séparés par des virgules)</label>
+          <input id="awardeeInput" type="text" placeholder="En majuscule, sans caractères spéciaux" />
+        </div>
+
+        <div class="grid-2">
+          <div class="stack">
+            <label class="lbl">Limite résultats</label>
+            <select id="veilleLimit">
+              <option value="50" selected>50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+              <option value="500">500</option>
+            </select>
           </div>
-          <div id="companies" class="chips" role="group" aria-label="Filtrer par entité"></div>
+          <div class="stack">
+            <label class="lbl">&nbsp;</label>
+            <div class="actions-row">
+              <button id="veilleGo" class="btn-primary">Rechercher</button>
+              <button id="exportExcel" class="soft">Exporter Excel</button>
+              <!-- ⏳ spinner de chargement -->
+              <span id="veilleSpinner" class="spinner hidden" aria-live="polite" title="Chargement"></span>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section id="list">
-        <ul id="people"></ul>
-        <div id="empty" class="hidden">Aucun résultat.</div>
+
+      <!-- Résultats : cartes (style Annuaire) -->
+      <section id="veilleResults">
+        <ul id="veilleList" class="veille-cards"></ul>
+        <div id="veilleEmpty" class="hidden">Aucun résultat.</div>
       </section>
     </aside>
+  </section>
 
-  </div>
 
+  <!-- Modal partagé (laissé en place pour Annuaire) -->
   <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card">
       <button id="modalClose" class="soft icon-only" aria-label="Fermer">✕</button>
@@ -67,10 +174,116 @@
     </div>
   </div>
 
-  <!-- URL publiée de l’onglet Personnel -->
+  <!-- Config de l’onglet Annuaire -->
   <script>
     window.__GSHEET_URL__ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRszYCdjHlFvMHkMvU9j8Mg8CHK6cou5R-PVJULGrNB9a9s3qrcvY2pSuPPwAjxOQ/pub?gid=1426119136&single=true&output=csv";
   </script>
+
+  <!-- JS existants -->
   <script src="app.js"></script>
+  <script src="veille.js"></script>
+
+  <!-- Initialisation de l’onglet Références + gestion active des onglets
+       (on garde une carte indépendante par section et on évite le handler
+       "Références" de veille.js en stoppant la propagation) -->
+  <script>
+    (function(){
+      let refMap;
+      const byId = (id)=>document.getElementById(id);
+      const views = {
+        annuaire: byId('view-annuaire'),
+        references: byId('view-references'),
+        veille: byId('view-veille')
+      };
+      const maps = {
+        annuaire: byId('map'),
+        references: byId('refMap'),
+        veille: byId('veilleMap')
+      };
+      const panels = {
+        annuaire: byId('panel'),
+        references: byId('refPanel'),
+        veille: byId('veillePanel')
+      };
+      const overlayVeille = byId('veilleOverlay');
+
+      function activateTab(name){
+        // état visuel des onglets
+        document.querySelectorAll('.tab-chip').forEach(b=>{
+          b.classList.toggle('active', b.dataset.tab === name);
+        });
+        // vues
+        Object.entries(views).forEach(([k,el])=>{
+          el.classList.toggle('active', k === name);
+        });
+        // cartes/panneaux par section
+        if (name === 'annuaire'){
+          maps.annuaire.classList.remove('hidden');
+          panels.annuaire.classList.remove('hidden');
+          // cacher les autres
+          maps.references.classList.add('hidden'); panels.references.classList.add('hidden');
+          maps.veille.classList.add('hidden'); panels.veille.classList.add('hidden');
+          overlayVeille.classList.add('hidden');
+          } else if (name === 'references'){
+            // init carte Références à la demande
+            if (!refMap){
+              refMap = L.map('refMap',{zoomControl:false}).setView([46.71109, 1.7191036], 6);
+              L.tileLayer("//{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
+                attribution:'données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL – rendu <a href="//openstreetmap.fr">OSM France</a>'
+              }).addTo(refMap);
+              L.control.zoom({position:"bottomleft"}).addTo(refMap);
+            }
+            maps.references.classList.remove('hidden');
+            panels.references.classList.remove('hidden');
+
+            maps.annuaire.classList.add('hidden'); panels.annuaire.classList.add('hidden');
+            maps.veille.classList.add('hidden'); panels.veille.classList.add('hidden');
+            overlayVeille.classList.add('hidden');
+
+            // 🔧 essentiel pour corriger l’affichage des tiles
+            setTimeout(()=> { try { refMap.invalidateSize(); } catch(e){} }, 30);
+          } else if (name === 'veille'){
+          // laisser veille.js gérer l’init de sa map ; on affiche juste le conteneur
+          maps.veille.classList.remove('hidden');
+          panels.veille.classList.remove('hidden');
+          overlayVeille.classList.remove('hidden');
+
+          maps.annuaire.classList.add('hidden'); panels.annuaire.classList.add('hidden');
+          maps.references.classList.add('hidden'); panels.references.classList.add('hidden');
+        }
+      }
+
+      // Onglets
+      document.querySelector('.tab-chip[data-tab="annuaire"]').addEventListener('click', (e)=>{
+        e.preventDefault();
+        activateTab('annuaire');
+      });
+
+      // IMPORTANT : on court-circuite le handler "Références" ajouté par veille.js
+      const refBtn = document.querySelector('.tab-chip[data-tab="references"]');
+      refBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        e.stopImmediatePropagation(); // empêche switchToAnnuaireOrRefs() de veille.js
+        activateTab('references');
+      });
+
+      // Veille : on laisse veille.js faire son switch (il masque Annuaire),
+      // on complète juste l’état visuel des onglets.
+      document.querySelector('.tab-chip[data-tab="veille"]').addEventListener('click', ()=>{
+        // délai court pour laisser switchToVeille faire son travail puis aligner les onglets
+        setTimeout(()=> activateTab('veille'), 0);
+      });
+
+      // Petits helpers Références (placeholder UX)
+      const refClear = byId('refClear');
+      const refSearch = byId('refSearch');
+      if (refClear && refSearch){
+        refClear.addEventListener('click', ()=> { refSearch.value = ""; });
+      }
+
+      // Démarrage sur Annuaire
+      activateTab('annuaire');
+    })();
+  </script>
 </body>
 </html>
