@@ -162,10 +162,6 @@ function renderCards(rows){
         </div>
 
         ${objShort ? `<div class="v-obj" title="${objet.replace(/"/g,'&quot;')}">${objShort}</div>` : ""}
-
-        <div class="v-actions">
-          <button class="btn" data-action="focus">Voir sur la carte</button>
-        </div>
       </li>
     `;
   }).join("");
