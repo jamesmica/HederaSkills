@@ -66,8 +66,9 @@ function clearVeille(){
 function initVeilleMap(){
   if (veilleMap) return;                // ✅ une seule instanciation
   veilleMap = L.map("veilleMap", { zoomControl:false }).setView([46.71109, 1.7191036], 6);
-  L.tileLayer("//{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
-    attribution:'données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL – rendu <a href="//openstreetmap.fr">OSM France</a>'
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19
   }).addTo(veilleMap);
   L.control.zoom({position:"bottomleft"}).addTo(veilleMap);
   ensureVeilleLayer();

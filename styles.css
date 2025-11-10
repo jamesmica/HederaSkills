@@ -110,17 +110,24 @@ body{
 }
 
 /* Listes cartes de personnes / références */
-#list, #refList, #veilleResults{ overflow:auto; padding:6px 10px; height:100% }
+#list, #veilleResults{ overflow:auto; padding:6px 10px; height:100% }
+ul#refItems {
+    padding: 6px 10px;
+    margin-top:0;
+    display: grid;
+    gap: 8px;
+}
+#refList {overflow: auto;}
 #people{ list-style:none; margin:0; padding:0; display:grid; gap:8px }
 #people a { color: white; text-decoration: none; }
 .person{
-  display:grid; grid-template-columns:80px 1fr; gap:10px; align-items:center;
+  display:grid; grid-template-columns:50px 1fr; gap:12px; align-items:center;
   background: rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.1);
-  border-radius:12px; padding:8px;
+  border-radius:12px; padding:10px;
 }
 .person img {
-  width: 80px; border-radius: 50%; aspect-ratio: 1 / 1; object-fit: cover;
+  width: 50px; border-radius: 50%; aspect-ratio: 1 / 1; object-fit: cover;
   border: 2px solid rgba(255,255,255,.35);
 }
 .person .name{ font-weight:700 }
@@ -140,6 +147,17 @@ body{
 }
 body.panel-collapsed #panel{ transform: translateX(100%) }
 body.panel-collapsed #panelToggle{ transform:none }
+
+/* Bouton toggle Références (identique à Annuaire) */
+#refPanelToggle{
+  position:absolute; top:88px; right:384px; z-index:1001;
+  width:36px; height:36px; border-radius:999px;
+  border:1px solid var(--border);
+  background:#00b65b; color:#fff; cursor:pointer;
+  transition: transform .35s ease;
+}
+body.ref-panel-collapsed #refPanel{ transform: translateX(100%) }
+body.ref-panel-collapsed #refPanelToggle{ transform:none }
 
 /* Modal (existant) */
 .modal{ position:fixed; inset:0; background:rgba(0,0,0,.5); display:grid; place-items:center; z-index:2000 }
@@ -161,9 +179,9 @@ body.panel-collapsed #panelToggle{ transform:none }
   max-width: min(calc(100vw - 40px), calc(100% - 40px));
 }
 .popup-card {
-  display: grid; grid-template-columns: 80px 1fr; gap: 10px; align-items: center;
+  display: grid; grid-template-columns: 50px 1fr; gap: 12px; align-items: center;
 }
-.popup-card img{ width:80px; height:80px; border-radius:50%; object-fit:cover }
+.popup-card img{ width:50px; height:50px; border-radius:50%; object-fit:cover }
 .popup-card .name{ font-weight:700 }
 .popup-card .meta{ font-size:12px; opacity:.9 }
 .popup-card .btn{ margin-top:6px; font-size:12px; padding:6px 8px; border-radius:8px; background:#000; color:#fff; border:none; cursor:pointer }
